@@ -7,14 +7,15 @@ import userEvent from '@testing-library/user-event'
 import faker from 'faker'
 import Login from '../../components/login'
 
-const buildLoginForm = () => ({
+const buildLoginForm = overrides => ({
   username: faker.internet.userName(),
   password: faker.internet.password(),
+  ...overrides,
 })
 test('submitting the form calls onSubmit with username and password', () => {
   const handleSubmit = jest.fn()
   render(<Login onSubmit={handleSubmit} />)
-  const {username, password} = buildLoginForm()
+  const {username, password} = buildLoginForm({password: 'testPass'})
 
   userEvent.type(screen.getByLabelText(/username/i), username)
   userEvent.type(screen.getByLabelText(/password/i), password)
