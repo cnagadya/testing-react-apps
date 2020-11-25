@@ -4,20 +4,25 @@
 import * as React from 'react'
 import {render, screen} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import faker from 'faker'
 import Login from '../../components/login'
 
+const buildLoginForm = () => ({
+  username: faker.internet.userName(),
+  password: faker.internet.password(),
+})
 test('submitting the form calls onSubmit with username and password', () => {
-  let submittedData
-  const handleSubmit = data => (submittedData = data)
+  const handleSubmit = jest.fn()
   render(<Login onSubmit={handleSubmit} />)
+  const {username, password} = buildLoginForm()
 
-  userEvent.type(screen.getByLabelText(/username/i), 'entered name')
-  userEvent.type(screen.getByLabelText(/password/i), 'entered password')
+  userEvent.type(screen.getByLabelText(/username/i), username)
+  userEvent.type(screen.getByLabelText(/password/i), password)
   userEvent.click(screen.getByRole('button', {name: /submit/i}))
 
-  expect(submittedData).toEqual({
-    username: 'entered name',
-    password: 'entered password',
+  expect(handleSubmit).toBeCalledWith({
+    username: username,
+    password: password,
   })
 })
 
